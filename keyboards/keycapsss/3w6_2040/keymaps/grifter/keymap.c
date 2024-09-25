@@ -1,57 +1,89 @@
-// Copyright 2021 weteor | 2022 Conor Burns (@Conor-Burns)
-// Copyright 2023 Ben Roe (@keycapsss)
-// Copyright 2023 Tom Barnes (@keyboard-magpie)
-// SPDX-License-Identifier: GPL-2.0-or-later
-
 #include QMK_KEYBOARD_H
+
 enum layers {
-    _ALPHA_QWERTY = 0,
-    _ALPHA_COLEMAK,
-    _SYM,
-    _NAV,
+    _BASE = 0,
     _NUM,
-    _CFG,
+    _EXT,
+    _SYM,
+    _FN,
 };
 
+enum custom_keycodes {
+    CTRL_CMD_Q = SAFE_RANGE, // This keycode locks macOS
+    CLEAR_OSM, // This keycode cancels one-shot-modifiers
+};
+
+// clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+	[_BASE] = LAYOUT_split_3x5_3(
+            KC_Q, KC_W, KC_E, KC_R, KC_T,               KC_Z, KC_U, KC_I, KC_O, KC_P,
+            KC_A, KC_S, KC_D, KC_F, KC_G,               KC_H, KC_J, KC_K, KC_L, LALT(KC_U),
+            KC_Y, KC_X, KC_C, KC_V, KC_B,               KC_N, KC_M, KC_COMM, KC_DOT, QK_REP,
+                        MO(1), MO(2), KC_LSFT,      KC_SPC, MO(3), MO(4)),
 
-    // clang-format off
+	[_NUM] = LAYOUT_split_3x5_3(
+            KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                      KC_EQL, KC_7, KC_8, KC_9, KC_PLUS,
+            OSM(MOD_LSFT), OSM(MOD_LCTL), OSM(MOD_LALT), OSM(MOD_LGUI), KC_NO,      KC_ASTR, KC_4, KC_5, KC_6, KC_MINS,
+            KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                      KC_0, KC_1, KC_2, KC_3, KC_SLSH,
+                        KC_TRNS, KC_TRNS, KC_NO,                                KC_NO, KC_TRNS, KC_NO),
 
-    [_ALPHA_QWERTY] = LAYOUT_split_3x5_3(
-        KC_Q,         KC_W,    KC_E,    KC_R,    KC_T,                                                KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,
-        KC_A,         KC_S,    KC_D,    KC_F,    KC_G,                                                KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,
-        LSFT_T(KC_Z), KC_X,    KC_C,    KC_V,    KC_B,                                                KC_N,    KC_M,    KC_COMM, KC_DOT,  RSFT_T(KC_SLSH),
-                        LCTL_T(KC_ESC), LT(_NUM,KC_SPC), LT(_NAV, KC_TAB),     LT(_SYM, KC_BSPC), KC_ENT, LALT_T(KC_DEL)
-    ),
-    [_ALPHA_COLEMAK] = LAYOUT_split_3x5_3(
-        KC_Q,         KC_W,    KC_F,    KC_P,    KC_G,                                                KC_J,    KC_L,    KC_U,    KC_Y,    KC_QUOT,
-        KC_A,         KC_R,    KC_S,    KC_T,    KC_D,                                                KC_H,    KC_N,    KC_E,    KC_I,    KC_O,
-        LSFT_T(KC_Z), KC_X,    KC_C,    KC_V,    KC_B,                                                KC_K,    KC_M,    KC_COMM, KC_DOT,  RSFT_T(KC_SCLN),
-                        LCTL_T(KC_ENT), LT(_NUM,KC_SPC), LT(_NAV, KC_TAB),     LT(_SYM, KC_BSPC), KC_ENT, LALT_T(KC_DEL)
-    ),
-    [_SYM] = LAYOUT_split_3x5_3(
-        KC_GRV , KC_CIRC,   KC_AT,  KC_DLR, KC_TILD,                                KC_AMPR, KC_EXLM, KC_PIPE, KC_UNDS, KC_HASH,
-        KC_SLSH, KC_LBRC, KC_LCBR, KC_LPRN,  KC_EQL,                                KC_ASTR, KC_RPRN, KC_RCBR, KC_RBRC, KC_BSLS,
-        _______, KC_QUES, KC_PLUS, KC_PERC, XXXXXXX,                                XXXXXXX, XXXXXXX, KC_MINS, XXXXXXX, _______,
-                                        XXXXXXX, MO(_CFG), XXXXXXX,     _______, XXXXXXX, XXXXXXX
-    ),
-    [_NAV] = LAYOUT_split_3x5_3(
-        XXXXXXX, KC_VOLD, KC_MUTE, KC_VOLU, XXXXXXX,                                XXXXXXX, KC_PGDN,   KC_UP, KC_PGUP,  KC_DEL,
-        KC_MPRV, KC_MPLY, KC_MSTP, KC_MNXT, XXXXXXX,                                KC_HOME, KC_LEFT, KC_DOWN, KC_RGHT,  KC_END,
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-                                        XXXXXXX, XXXXXXX, _______,      XXXXXXX, MO(_CFG), XXXXXXX
-    ),
-    [_NUM] = LAYOUT_split_3x5_3(
-        XXXXXXX,  KC_F9, KC_F10, KC_F11, KC_F12,                                    KC_PPLS,  KC_P7,  KC_P8,  KC_P9, KC_PSLS,
-        XXXXXXX,  KC_F5,  KC_F6,  KC_F7,  KC_F8,                                    KC_P0,  KC_P4,  KC_P5,  KC_P6, KC_PDOT,
-        XXXXXXX,  KC_F1,  KC_F2,  KC_F3,  KC_F4,                                    KC_PMNS,  KC_P1,  KC_P2,  KC_P3, KC_PAST,
-                                        XXXXXXX, _______, XXXXXXX,      KC_PEQL, KC_PENT, XXXXXXX
-    ),
-    [_CFG] = LAYOUT_split_3x5_3(
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                XXXXXXX, XXXXXXX, XXXXXXX,DF(_ALPHA_QWERTY), DF(_ALPHA_COLEMAK),
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-                                         XXXXXXX, _______, XXXXXXX,     XXXXXXX, _______, XXXXXXX
-    )
-    // clang-format on
+	[_EXT] = LAYOUT_split_3x5_3(
+            CTRL_CMD_Q, LCTL(KC_B) , SGUI(KC_C), CLEAR_OSM, LALT(KC_SPC),                   LGUI(KC_LEFT), KC_PGDN, KC_PGUP, KC_INS, LGUI(KC_RGHT),
+            OSM(MOD_LSFT), OSM(MOD_LCTL), OSM(MOD_LALT), OSM(MOD_LGUI), LGUI(KC_G),     KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_DEL,
+            LGUI(KC_Z), LGUI(KC_X), LGUI(KC_C), LGUI(KC_V), KC_ENT,                     KC_ESC, KC_BSPC, KC_TAB, KC_NO, KC_NO,
+                        KC_NO, KC_TRNS, KC_NO,                                  KC_NO, KC_TRNS, KC_NO),
+
+	[_SYM] = LAYOUT_split_3x5_3(
+            KC_EXLM, KC_QUES, LSA(KC_2), KC_AMPR, KC_GRV,                           KC_NO, KC_AT, KC_DLR, KC_HASH, KC_NO,
+            OSM(MOD_LSFT), OSM(MOD_LCTL), OSM(MOD_LALT), OSM(MOD_LGUI), KC_DQUO,    KC_LPRN, KC_LCBR, KC_LBRC, KC_PIPE, KC_COLN,
+            KC_PERC, KC_TILD, KC_NO, KC_NO, KC_QUOT,                                KC_RPRN, KC_RCBR, KC_RBRC, KC_BSLS, KC_SCLN,
+                        KC_NO, KC_NO, KC_NO,                                    KC_NO, KC_TRNS, KC_TRNS),
+
+	[_FN] = LAYOUT_split_3x5_3(
+            KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT, KC_NO,                              KC_NO, KC_F7, KC_F8, KC_F9, KC_F12,
+            OSM(MOD_LSFT), OSM(MOD_LCTL), OSM(MOD_LALT), OSM(MOD_LGUI), KC_NO,      KC_NO, KC_F4, KC_F5, KC_F6, KC_F11,
+            KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                      KC_NO, KC_F1, KC_F2, KC_F3, KC_F10,
+                                KC_NO, KC_NO, KC_NO,                            KC_NO, KC_NO, KC_TRNS)
 };
+// clang-format on
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case CTRL_CMD_Q:
+            if (record->event.pressed) {
+                // When the key is pressed
+                register_code(KC_LCTL);
+                register_code(KC_LGUI);
+                register_code(KC_Q);
+            } else {
+                // When the key is released
+                unregister_code(KC_LCTL);
+                unregister_code(KC_LGUI);
+                unregister_code(KC_Q);
+            }
+            return false; // Skip all further processing of this key
+        case CLEAR_OSM:
+            if (record->event.pressed) {
+                clear_oneshot_mods();
+                rgblight_setrgb(0, 0, 0);
+            }
+            return false;
+        default:
+            return true; // Process all other keycodes normally
+    }
+}
+
+// Override matrix_scan_user to check one-shot modifier state and modify lighting accordingly
+void matrix_scan_user(void) {
+    if (get_oneshot_mods()) {
+        rgblight_sethsv_at(HSV_ORANGE, 0); // Only left side can be controlled, I do not know why
+    } else {
+        rgblight_setrgb(0, 0, 0);
+    }
+
+}
+
+// Initialization function
+void keyboard_post_init_user(void) {
+    rgblight_setrgb(0, 0, 0);  // Ensure RGB is off initially
+}
