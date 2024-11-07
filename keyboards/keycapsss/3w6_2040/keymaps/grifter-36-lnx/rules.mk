@@ -1,2 +1,2 @@
-REPEAT_KEY_ENABLE = yes
-RGBLIGHT_ENABLE = yes
+DEBOUNCE_TYPE = sym_defer_pk
+
